@@ -3,42 +3,64 @@
 import {useRive} from "rive-react"
 
 export default function Home() {
-  const { RiveComponent } = useRive({
-    src: "/ally_security.riv",
-    autoplay: true,
-  });
-
   return (
     <main className="flex bg-[#ffe500] min-h-screen flex-col items-center justify-between p-24">
-      <div className="w-[500px] h-[500px]">
-        <RiveComponent/>
-      </div>
-        <RiveMed/>
-        <RiveSm/>
+        <div className="flex flex-row justify-between items-center">
+            <PurpleJewel width={500} height={500}/>
+            <YellowJewel width={500} height={500}/>
+        </div>
+        <div className="flex flex-row justify-between items-center">
+            <RedJewel width={500} height={500}/>
+        </div>
+        <div className="flex flex-row justify-between items-center">
+            <PurpleJewel width={250} height={250}/>
+            <YellowJewel width={250} height={250}/>
+            <RedJewel width={250} height={250}/>
+        </div>
+        <div className="flex flex-row justify-between items-center">
+            <PurpleJewel width={100} height={100}/>
+            <YellowJewel width={100} height={100}/>
+            <RedJewel width={100} height={100}/>
+        </div>
     </main>
   );
 }
 
-function RiveMed() {
+function PurpleJewel({width, height}: {width: number, height: number}) {
     const {RiveComponent} = useRive({
-        src: "/ally_security.riv",
+        src: "/purple_jewel_rotate_basic.riv",
         autoplay: true,
     });
     return (
-        <div className="w-[250px] h-[250px]">
+        <div style={{width: width, height: height}}>
             <RiveComponent/>
         </div>
     )
+
 }
 
-function RiveSm() {
+function YellowJewel({width, height}: {width: number, height: number}) {
     const {RiveComponent} = useRive({
-        src: "/ally_security.riv",
+        src: "/yellow_jewel_rotate_basic.riv",
         autoplay: true,
     });
     return (
-        <div className="w-[100px] h-[100px]">
+        <div style={{width: width, height: height}}>
             <RiveComponent/>
         </div>
     )
+
+}
+
+function RedJewel({width, height}: {width: number, height: number}) {
+    const {RiveComponent} = useRive({
+        src: "/red_jewel_rotate_basic.riv",
+        autoplay: true,
+    });
+    return (
+        <div style={{width: width, height: height}}>
+            <RiveComponent/>
+        </div>
+    )
+
 }
