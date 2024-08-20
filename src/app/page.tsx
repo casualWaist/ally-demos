@@ -6,6 +6,9 @@ export default function Home() {
   return (
       <main className="flex bg-[#ffe500] min-h-screen flex-col items-center justify-between p-24">
           <div className="flex flex-row justify-between items-center">
+              <AMorph width={500} height={500}/>
+          </div>
+          <div className="flex flex-row justify-between items-center">
               <PurpleJewel width={500} height={500}/>
               <YellowJewel width={500} height={500}/>
           </div>
@@ -39,6 +42,19 @@ export default function Home() {
           </div>
       </main>
   );
+}
+
+function AMorph({width, height}: { width: number, height: number }) {
+    const {RiveComponent} = useRive({
+        src: "/a_morph.riv",
+        autoplay: true,
+    });
+    return (
+        <div style={{width: width, height: height}}>
+            <RiveComponent/>
+        </div>
+    )
+
 }
 
 function PurpleJewel({width, height}: { width: number, height: number }) {
