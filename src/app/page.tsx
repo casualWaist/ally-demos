@@ -6,6 +6,9 @@ export default function Home() {
   return (
       <main className="flex bg-[#ffe500] min-h-screen flex-col items-center justify-between p-24">
           <div className="flex flex-row justify-between items-center">
+              <Logo width={500} height={500}/>
+          </div>
+          <div className="flex flex-row justify-between items-center p-36">
               <RoughLogo width={500} height={500}/>
               <RoughLogoColor width={500} height={500}/>
           </div>
@@ -46,6 +49,19 @@ export default function Home() {
           </div>
       </main>
   );
+}
+
+function Logo({width, height}: { width: number, height: number }) {
+    const {RiveComponent} = useRive({
+        src: "/logo_proof.riv",
+        autoplay: true,
+    });
+    return (
+        <div style={{width: width, height: height}}>
+            <RiveComponent/>
+        </div>
+    )
+
 }
 
 function RoughLogo({width, height}: { width: number, height: number }) {
