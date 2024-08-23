@@ -6,6 +6,9 @@ export default function Home() {
   return (
       <main className="flex bg-[#ffe500] min-h-screen flex-col items-center justify-between p-24">
           <div className="flex flex-row justify-between items-center">
+              <AsaBasic width={500} height={500}/>
+          </div>
+          <div className="flex flex-row justify-between items-center">
               <Logo width={500} height={500}/>
           </div>
           <div className="flex flex-row justify-between items-center p-36">
@@ -49,6 +52,19 @@ export default function Home() {
           </div>
       </main>
   );
+}
+
+function AsaBasic({width, height}: { width: number, height: number }) {
+    const {RiveComponent} = useRive({
+        src: "/asa_base.riv",
+        autoplay: true,
+    });
+    return (
+        <div style={{width: width, height: height}}>
+            <RiveComponent/>
+        </div>
+    )
+
 }
 
 function Logo({width, height}: { width: number, height: number }) {
