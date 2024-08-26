@@ -1,6 +1,8 @@
 'use client'
 
-import {useRive} from "rive-react"
+import {useEffect, useRef} from "react"
+import Rive, {useRive} from "rive-react"
+import {useStateMachineInput} from "rive-react"
 
 export default function Home() {
   return (
@@ -55,13 +57,29 @@ export default function Home() {
 }
 
 function AsaBasic({width, height}: { width: number, height: number }) {
-    const {RiveComponent} = useRive({
-        src: "/asa_base.riv",
+    const {rive, RiveComponent} = useRive({
+        src: "/asa_proof.riv",
+        stateMachines: "State Machine 1",
         autoplay: true,
     });
+
+    const hovering = useStateMachineInput(rive, "State Machine 1", "Hovering", false);
+
+    console.log(rive, hovering?.value);
+    useEffect(() => {
+        if (rive){
+
+        }
+    }, [rive]);
     return (
         <div style={{width: width, height: height}}>
-            <RiveComponent/>
+            <RiveComponent onPointerEnter={() => {
+                if (!hovering?.value) {
+                    hovering!.value = true
+                    setTimeout(() => {
+                        hovering!.value = false
+                    }, 3900)
+            }}}/>
         </div>
     )
 
