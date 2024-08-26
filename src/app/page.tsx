@@ -1,7 +1,7 @@
 'use client'
 
-import {useEffect, useRef} from "react"
-import Rive, {useRive} from "rive-react"
+import {useEffect} from "react"
+import {useRive} from "rive-react"
 import {useStateMachineInput} from "rive-react"
 
 export default function Home() {
@@ -68,6 +68,15 @@ function AsaBasic({width, height}: { width: number, height: number }) {
     console.log(rive, hovering?.value);
     useEffect(() => {
         if (rive){
+            const handleMouseMove = (event: MouseEvent) => {
+                console.log(event)
+            }
+
+            window.addEventListener('mousemove', handleMouseMove);
+
+            return () => {
+                window.removeEventListener('mousemove', handleMouseMove);
+            };
 
         }
     }, [rive]);
