@@ -31,18 +31,6 @@ export default function Home() {
               <RedJewel width={100} height={100}/>
               <Diamond width={100} height={100}/>
           </div>
-          <div className="flex flex-row justify-between items-center">
-              <PurpleJewelShine width={500} height={500}/>
-              <PurpleJewelBling width={500} height={500}/>
-          </div>
-          <div className="flex flex-row justify-between items-center">
-              <PurpleJewelShine width={250} height={250}/>
-              <PurpleJewelBling width={250} height={250}/>
-          </div>
-          <div className="flex flex-row justify-between items-center">
-              <PurpleJewelShine width={100} height={100}/>
-              <PurpleJewelBling width={100} height={100}/>
-          </div>
       </main>
   );
 }
@@ -56,11 +44,10 @@ function AsaBasic({width, height}: { width: number, height: number }) {
 
     const hovering = useStateMachineInput(rive, "State Machine 1", "Hovering", false);
 
-    console.log(rive, hovering?.value);
     useEffect(() => {
         if (rive){
             const handleMouseMove = (event: MouseEvent) => {
-                console.log(event)
+                //console.log(event)
             }
 
             window.addEventListener('mousemove', handleMouseMove);
@@ -139,7 +126,7 @@ function AMorph({width, height}: { width: number, height: number }) {
 
 function PurpleJewel({width, height}: { width: number, height: number }) {
     const {RiveComponent} = useRive({
-        src: "/purple_jewel_rotate_basic.riv",
+        src: "/purple_jewel_final.riv",
         autoplay: true,
     });
     return (
