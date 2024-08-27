@@ -9,16 +9,7 @@ export default function Home() {
       <main className="flex bg-[#ffe500] min-h-screen flex-col items-center justify-between p-24">
           <div className="flex flex-row justify-between items-center">
               <AsaBasic width={500} height={500}/>
-          </div>
-          <div className="flex flex-row justify-between items-center">
               <Logo width={500} height={500}/>
-          </div>
-          <div className="flex flex-row justify-between items-center p-36">
-              <RoughLogo width={500} height={500}/>
-              <RoughLogoColor width={500} height={500}/>
-          </div>
-          <div className="flex flex-row justify-between items-center">
-              <AMorph width={500} height={500}/>
           </div>
           <div className="flex flex-row justify-between items-center">
               <PurpleJewel width={500} height={500}/>
