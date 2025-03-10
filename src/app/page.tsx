@@ -100,7 +100,7 @@ function ShowMeState({width, height}: { width: number, height: number }) {
             setTimeout(() => {
                 media_recorder.current.stop()
             }, 3000)*/
-            trigger?.fire()
+            //trigger?.fire()
             rive?.play()
         }}>
             <div className="flex flex-row justify-between items-center w-[700px]">
