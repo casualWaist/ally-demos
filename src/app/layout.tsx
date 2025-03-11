@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-      <canvas id="canvas" className="w-screen h-screen"></canvas>
+      <canvas id="canvas" className="absolute w-screen h-screen"></canvas>
         {children}
       <Script src="fluid_sim.js" type="text/javascript"></Script>
       </body>

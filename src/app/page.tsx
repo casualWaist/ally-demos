@@ -6,12 +6,12 @@ import {useStateMachineInput} from "rive-react"
 
 export default function Home() {
   return <>
-      <main className="flex bg-black min-h-screen flex-col items-center justify-between p-24"
+      <main className="absolute flex z-10 min-h-screen w-screen flex-col items-center p-24 pointer-events-none"
             onPointerMove={(event) => {
                 console.log(event.pageX, event.pageY)
             }}>
-          <div className="flex flex-row justify-between items-center">
-              <BlueDragon width={500} height={500}/>
+          <div className="flex flex-row justify-between items-center pointer-events-none">
+              <BlueDragon width={700} height={700}/>
           </div>
       {/*<AsaBasic width={500} height={500}/>*/}
         {/*<ShowMeState width={500} height={500}/>*/}
@@ -40,13 +40,20 @@ export default function Home() {
 }
 
 function BlueDragon({width, height}: {width: number, height: number}) {
-    const {RiveComponent} = useRive({
-        src: "/asa_wizard.riv",
+    const {RiveComponent, rive} = useRive({
+        src: "/dnd_hero.riv",
         stateMachines: "State Machine 1",
         autoplay: true,
     });
+    const triggerInput = useStateMachineInput(rive, "State Machine 1", "Hovering");
+
+    useEffect(() => {
+        if (triggerInput) {
+            triggerInput.fire();
+        }
+    }, [triggerInput]);
     return (
-        <div style={{width: width, height: height, overflow: 'visible', backgroundColor: 'white'}}>
+        <div style={{width: width, height: height, overflow: 'visible', pointerEvents: 'none'}}>
             <RiveComponent/>
         </div>
     )

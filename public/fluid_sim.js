@@ -461,7 +461,8 @@ const gradientShader = compileShader(gl.FRAGMENT_SHADER, `
     }
     
     float dss(vec2 p1, vec2 p2, vec2 uv) {
-        float d1 = smoothstep(0.0, 1.0, distance(p1, uv));
+        float duv = dot(uv, vec2(0.0, 0.0));
+        float d1 = smoothstep(0.0, 1.0, distance(p1, uv * duv));
         float d2 = smoothstep(0.0, 1.0, distance(p2, uv));
         return smoothstep(0.0, 1.0, distance(d1, d2));
     }
@@ -475,14 +476,14 @@ const gradientShader = compileShader(gl.FRAGMENT_SHADER, `
         uv2 *= revRot(time * 0.025);
         float d1 = distance(uv, point1) * 0.2;
         vec4 topColor = mix(color3, color5, dss(point1, point2, uv));
-        float h = cnoise(topColor.xyz * sin(-time * 0.01) * 2.0 + uv2.x - uv.y);
+        float h = cnoise(topColor.xyz * sin(-time * 0.01) + uv2.x);
         float d2 = distance(uv2, point2) * 0.9;
         vec4 bottomColor = mix(color1, color2, dss(point3, point4, uv * h));
         vec4 comboColor = mix(topColor, bottomColor, dss(point5, point6, uv2));
         float d3 = distance(uv * uv2, point3);
         vec4 middleColor = mix(color4, color6, smoothstep(0.0, 1.0, pow(d3 * 2.1, 2.0)));
-        gl_FragColor = mix(middleColor, comboColor, distance(uv * -h * 5.5, point4) * 0.9);
-        //gl_FragColor = mix(topColor, bottomColor, dss(point5, point6, uv2));
+        gl_FragColor = mix(middleColor, comboColor, distance(uv * -h * 2.5, point4));
+        //gl_FragColor = topColor;
     }
 `);
 
@@ -938,7 +939,7 @@ function updateTargetPoints() {
 
 function interpolatePoints(dt, diff) {
     const d = Math.min(diff, 0.999)
-    const interpolationSpeed = dt * d;
+    const interpolationSpeed = dt * d * 0.75;
     for (let i = 0; i < currentPoints.length; i++) {
         currentPoints[i].x += (targetPoints[i].x - currentPoints[i].x) * interpolationSpeed;
         currentPoints[i].y += (targetPoints[i].y - currentPoints[i].y) * interpolationSpeed;
