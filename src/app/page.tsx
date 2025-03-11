@@ -10,9 +10,9 @@ export default function Home() {
             onPointerMove={(event) => {
                 console.log(event.pageX, event.pageY)
             }}>
-          {/*<div className="flex flex-row justify-between items-center">
+          <div className="flex flex-row justify-between items-center">
               <BlueDragon width={500} height={500}/>
-          </div>*/}
+          </div>
       {/*<AsaBasic width={500} height={500}/>*/}
         {/*<ShowMeState width={500} height={500}/>*/}
           {/*<div className="flex flex-row justify-between items-center">
@@ -41,7 +41,7 @@ export default function Home() {
 
 function BlueDragon({width, height}: {width: number, height: number}) {
     const {RiveComponent} = useRive({
-        src: "/beta_button.riv",
+        src: "/asa_wizard.riv",
         stateMachines: "State Machine 1",
         autoplay: true,
     });

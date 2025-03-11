@@ -32,12 +32,12 @@ let config = {
     SIM_RESOLUTION: 128,
     DYE_RESOLUTION: 1024,
     CAPTURE_RESOLUTION: 512,
-    DENSITY_DISSIPATION: 2.9,
-    VELOCITY_DISSIPATION: 0.55,
-    PRESSURE: 0.75,
-    PRESSURE_ITERATIONS: 20,
-    CURL: 7,
-    SPLAT_RADIUS: 1,
+    DENSITY_DISSIPATION: 0.7,
+    VELOCITY_DISSIPATION: 2.9,
+    PRESSURE: 0.15,
+    PRESSURE_ITERATIONS: 10,
+    CURL: 1,
+    SPLAT_RADIUS: 0.1,
     SPLAT_FORCE: 6000,
     SHADING: true,
     COLORFUL: true,
@@ -459,6 +459,12 @@ const gradientShader = compileShader(gl.FRAGMENT_SHADER, `
         float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x);
         return 2.2 * n_xyz;
     }
+    
+    float dss(vec2 p1, vec2 p2, vec2 uv) {
+        float d1 = smoothstep(0.0, 1.0, distance(p1, uv));
+        float d2 = smoothstep(0.0, 1.0, distance(p2, uv));
+        return smoothstep(0.0, 1.0, distance(d1, d2));
+    }
 
     void main() {
         vec2 uv = (gl_FragCoord.xy / resolution);
@@ -467,15 +473,16 @@ const gradientShader = compileShader(gl.FRAGMENT_SHADER, `
         vec2 uv2 = uv;
         uv *= rot(time * 0.005);
         uv2 *= revRot(time * 0.025);
-        float d1 = distance(uv, point1);
-        vec4 topColor = mix(color3, color2, d1);
-        float h = cnoise(topColor.xyz * sin(-time * 0.01) * 2.0 + uv2.x + uv.y);
-        float d2 = distance(uv2, point2);
-        vec4 bottomColor = mix(color1, color5, smoothstep(0.0, 1.0, d2));
-        vec4 comboColor = mix(bottomColor, topColor, smoothstep(0.0, 1.0, pow(h, 2.0)));
-        float d3 = distance(uv + uv2, point3);
-        vec4 middleColor = mix(color4, color6, smoothstep(0.0, 1.0, pow(d3 * (h - uv.x + uv2.y), 2.0)));
-        gl_FragColor = mix(middleColor, comboColor, distance(uv, point4) * 0.7);
+        float d1 = distance(uv, point1) * 0.2;
+        vec4 topColor = mix(color3, color5, dss(point1, point2, uv));
+        float h = cnoise(topColor.xyz * sin(-time * 0.01) * 2.0 + uv2.x - uv.y);
+        float d2 = distance(uv2, point2) * 0.9;
+        vec4 bottomColor = mix(color1, color2, dss(point3, point4, uv * h));
+        vec4 comboColor = mix(topColor, bottomColor, dss(point5, point6, uv2));
+        float d3 = distance(uv * uv2, point3);
+        vec4 middleColor = mix(color4, color6, smoothstep(0.0, 1.0, pow(d3 * 2.1, 2.0)));
+        gl_FragColor = mix(middleColor, comboColor, distance(uv * -h * 5.5, point4) * 0.9);
+        //gl_FragColor = mix(topColor, bottomColor, dss(point5, point6, uv2));
     }
 `);
 
@@ -911,10 +918,10 @@ const targetPoints = [
 ];
 
 const currentPoints = [
-    { x: 0.7, y: 0.335 },
-    { x: -0.7, y: 0.643 },
-    { x: 0.095, y: -0.54 },
-    { x: 0.392, y: 0.335 },
+    { x: -0.5, y: 0.5 },
+    { x: -0.5, y: -0.5 },
+    { x: 0.5, y: 0.5 },
+    { x: 0.5, y: -0.5 },
     { x: -0.221, y: -1.21 },
     { x: -0.44, y: 0.243 }
 ];
@@ -929,8 +936,9 @@ function updateTargetPoints() {
     }
 }
 
-function interpolatePoints(dt) {
-    const interpolationSpeed = dt * dt * dt;
+function interpolatePoints(dt, diff) {
+    const d = Math.min(diff, 0.999)
+    const interpolationSpeed = dt * d;
     for (let i = 0; i < currentPoints.length; i++) {
         currentPoints[i].x += (targetPoints[i].x - currentPoints[i].x) * interpolationSpeed;
         currentPoints[i].y += (targetPoints[i].y - currentPoints[i].y) * interpolationSpeed;
@@ -938,10 +946,11 @@ function interpolatePoints(dt) {
 }
 
 function update () {
-    let now = Date.now();
+    const now = Date.now();
     let dt = (now - lastUpdateTime) / 1000;
+    const diff = now - lastTargetUpdateTime;
 
-    if (now - lastTargetUpdateTime >= 3000) {
+    if (diff >= 6000) {
         updateTargetPoints();
         lastTargetUpdateTime = now;
     }
@@ -949,7 +958,7 @@ function update () {
     lastUpdateTime = now;
     if (resizeCanvas())
         initFramebuffers();
-    interpolatePoints(dt);
+    interpolatePoints(dt, diff / 6000);
     updateColors(dt);
     applyInputs();
     if (!config.PAUSED)
@@ -1228,9 +1237,9 @@ function correctDeltaY (delta) {
 
 function generateColor () {
     let c = HSVtoRGB(Math.random(), 1.0, 1.0);
-    c.r *= 0.15;
-    c.g *= 0.15;
-    c.b *= 0.15;
+    c.r *= 0.1;
+    c.g *= 0.1;
+    c.b *= 0.1;
     return c;
 }
 
