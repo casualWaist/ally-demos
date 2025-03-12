@@ -461,10 +461,10 @@ const gradientShader = compileShader(gl.FRAGMENT_SHADER, `
     }
     
     float dss(vec2 p1, vec2 p2, vec2 uv) {
-        float duv = dot(uv, vec2(0.0, 0.0));
-        float d1 = smoothstep(0.0, 1.0, distance(p1, uv * duv));
-        float d2 = smoothstep(0.0, 1.0, distance(p2, uv));
-        return smoothstep(0.0, 1.0, distance(d1, d2));
+        p1.x *= cos(uv.x * 8.0);
+        float d1 = smoothstep(0.0, 1.0, pow(distance(p1, uv), 2.0));
+        float d2 = smoothstep(0.0, 0.5, pow(distance(p2, uv), 2.0));
+        return smoothstep(0.0, 1.0, pow(distance(d1, d2), 2.0));
     }
 
     void main() {
@@ -475,14 +475,16 @@ const gradientShader = compileShader(gl.FRAGMENT_SHADER, `
         uv *= rot(time * 0.005);
         uv2 *= revRot(time * 0.025);
         float d1 = distance(uv, point1) * 0.2;
-        vec4 topColor = mix(color3, color5, dss(point1, point2, uv));
-        float h = cnoise(topColor.xyz * sin(-time * 0.01) + uv2.x);
+        vec4 topColor = mix(color6, color1, dss(point1, point2, uv));
+        float h = cnoise(topColor.xyz * sin(-time * 0.05) + uv2.x);
         float d2 = distance(uv2, point2) * 0.9;
-        vec4 bottomColor = mix(color1, color2, dss(point3, point4, uv * h));
+        vec4 bottomColor = mix(color5, color2, dss(point3, point4, uv * h));
         vec4 comboColor = mix(topColor, bottomColor, dss(point5, point6, uv2));
         float d3 = distance(uv * uv2, point3);
-        vec4 middleColor = mix(color4, color6, smoothstep(0.0, 1.0, pow(d3 * 2.1, 2.0)));
-        gl_FragColor = mix(middleColor, comboColor, distance(uv * -h * 2.5, point4));
+        vec4 middleColor = mix(color4, color3, dss(point1, point3, uv * h));
+        vec4 combo2 = mix(middleColor, comboColor, smoothstep(0.0, 1.0, distance(uv * -h * 2.5, point4)));
+        vec4 final = mix(comboColor, combo2, dss(point2, point4, uv2 * h));
+        gl_FragColor = mix(final, middleColor, dss(point2, point5, ogUv));
         //gl_FragColor = topColor;
     }
 `);
@@ -908,6 +910,7 @@ initFramebuffers();
 let lastUpdateTime = Date.now();
 let lastTargetUpdateTime = Date.now();
 let colorUpdateTimer = 0.0;
+let currentPointIndex = 0;
 
 const targetPoints = [
     { x: 0.7, y: 0.335 },
@@ -929,37 +932,32 @@ const currentPoints = [
 
 update();
 
-
-function updateTargetPoints() {
-    for (let i = 0; i < targetPoints.length; i++) {
-        targetPoints[i].x = Math.random() * 2 - 1;
-        targetPoints[i].y = Math.random() * 2 - 1;
-    }
-}
-
 function interpolatePoints(dt, diff) {
     const d = Math.min(diff, 0.999)
-    const interpolationSpeed = dt * d * 0.75;
+    const interpolationSpeed = dt * d * dt;
     for (let i = 0; i < currentPoints.length; i++) {
         currentPoints[i].x += (targetPoints[i].x - currentPoints[i].x) * interpolationSpeed;
         currentPoints[i].y += (targetPoints[i].y - currentPoints[i].y) * interpolationSpeed;
     }
 }
 
-function update () {
+
+function updateSingleTargetPoint() {
+    targetPoints[currentPointIndex].x = Math.random() * 2 - 1;
+    targetPoints[currentPointIndex].y = Math.random() * 2 - 1;
+    currentPointIndex = (currentPointIndex + 1) % targetPoints.length;
+}
+
+setInterval(updateSingleTargetPoint, 1000);
+
+function update() {
     const now = Date.now();
     let dt = (now - lastUpdateTime) / 1000;
-    const diff = now - lastTargetUpdateTime;
-
-    if (diff >= 6000) {
-        updateTargetPoints();
-        lastTargetUpdateTime = now;
-    }
     dt = Math.min(dt, 0.016666);
     lastUpdateTime = now;
     if (resizeCanvas())
         initFramebuffers();
-    interpolatePoints(dt, diff / 6000);
+    interpolatePoints(dt, 1 / 6); // Adjust interpolation speed
     updateColors(dt);
     applyInputs();
     if (!config.PAUSED)
