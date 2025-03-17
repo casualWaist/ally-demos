@@ -5,14 +5,6 @@ import {useRive} from "rive-react"
 import {useStateMachineInput} from "rive-react"
 
 export default function Home() {
-    /*const [riveLoaded, setRiveLoaded] = useState(false);
-    const video = useRef(null!)
-
-    useEffect(() => {
-        if (riveLoaded){
-            video.current.play()
-        }
-    }, [riveLoaded]);*/
 
   return <>
       <main className="absolute flex z-10 min-h-screen w-screen flex-col items-center p-24 pointer-events-none"
@@ -67,22 +59,6 @@ function BlueDragon({width, height}: {width: number, height: number}) {
     }, [triggerInput]);
     return (
         <div style={{width: width, height: height, overflow: 'visible', pointerEvents: 'none'}}>
-            <RiveComponent/>
-        </div>
-    )
-
-}
-
-function VideoOverlay({onLoad, width, height}: {onLoad: ()=>void, width: number, height: number}) {
-    const {RiveComponent, rive} = useRive({
-        src: "/charge_anywhere_hero.riv",
-        stateMachines: "State Machine 1",
-        autoplay: true,
-        onLoad: () => onLoad(true)
-    });
-
-    return (
-        <div style={{position: "absolute", top:0, width: width, height: height, overflow: 'visible'}}>
             <RiveComponent/>
         </div>
     )
