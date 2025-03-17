@@ -1,10 +1,19 @@
 'use client'
 
-import {useEffect, useRef} from "react"
+import {useEffect, useRef, useState} from "react"
 import {useRive} from "rive-react"
 import {useStateMachineInput} from "rive-react"
 
 export default function Home() {
+    const [riveLoaded, setRiveLoaded] = useState(false);
+    const video = useRef(null!)
+
+    useEffect(() => {
+        if (riveLoaded){
+            video.current.play()
+        }
+    }, [riveLoaded]);
+
   return <>
       <main className="absolute flex z-10 min-h-screen w-screen flex-col items-center p-24 pointer-events-none"
             onPointerMove={(event) => {
@@ -13,6 +22,10 @@ export default function Home() {
           <div className="flex flex-row justify-between items-center pointer-events-none">
               <BlueDragon width={700} height={700}/>
           </div>
+          {/*<div className="relative h-[500px] bg-green-400">
+              <video src="CAHero.mp4" ref={video} muted className="pt-[109.5px] w-[500px]"/>
+              <VideoOverlay onLoad={setRiveLoaded} width={500} height={500} />
+          </div>*/}
       {/*<AsaBasic width={500} height={500}/>*/}
         {/*<ShowMeState width={500} height={500}/>*/}
           {/*<div className="flex flex-row justify-between items-center">
@@ -54,6 +67,22 @@ function BlueDragon({width, height}: {width: number, height: number}) {
     }, [triggerInput]);
     return (
         <div style={{width: width, height: height, overflow: 'visible', pointerEvents: 'none'}}>
+            <RiveComponent/>
+        </div>
+    )
+
+}
+
+function VideoOverlay({onLoad, width, height}: {onLoad: ()=>void, width: number, height: number}) {
+    const {RiveComponent, rive} = useRive({
+        src: "/charge_anywhere_hero.riv",
+        stateMachines: "State Machine 1",
+        autoplay: true,
+        onLoad: () => onLoad(true)
+    });
+
+    return (
+        <div style={{position: "absolute", top:0, width: width, height: height, overflow: 'visible'}}>
             <RiveComponent/>
         </div>
     )

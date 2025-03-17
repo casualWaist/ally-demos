@@ -389,7 +389,7 @@ const gradientShader = compileShader(gl.FRAGMENT_SHADER, `
     mat2 revRot(float a) {
         float s = sin(a);
         float c = cos(a);
-        return mat2(c, s, -s, c);
+        return mat2(s, -c, c, s);
     }
     
     float cnoise(vec3 P) {
@@ -461,10 +461,32 @@ const gradientShader = compileShader(gl.FRAGMENT_SHADER, `
     }
     
     float dss(vec2 p1, vec2 p2, vec2 uv) {
-        p1.x *= cos(uv.x * 8.0);
-        float d1 = smoothstep(0.0, 1.0, pow(distance(p1, uv), 2.0));
-        float d2 = smoothstep(0.0, 0.5, pow(distance(p2, uv), 2.0));
-        return smoothstep(0.0, 1.0, pow(distance(d1, d2), 2.0));
+        uv.x *= uv.y + uv.x;
+        float d1 = smoothstep(0.0, 1.0, distance(p1, uv));
+        float d2 = smoothstep(0.0, 0.5, distance(p2, uv));
+        return smoothstep(0.0, 1.0, distance(d1, d2));
+    }
+    
+    vec4 screen(vec4 base, vec4 blend){
+        return vec4(
+            1.0 - ((1.0 - base.r) * (1.0 - blend.r)),
+            1.0 - ((1.0 - base.g) * (1.0 - blend.g)),
+            1.0 - ((1.0 - base.b) * (1.0 - blend.b)),
+            1.0
+        );
+    }
+    
+    float blendColorBurn(float base, float blend){
+        return (blend==0.0)?blend:max((1.0-((1.0-base)/blend)),0.0);
+    }
+    
+    vec4 blendColorBurn(vec4 base, vec4 blend){
+        return vec4(
+            blendColorBurn(base.r, blend.r),
+            blendColorBurn(base.g, blend.g),
+            blendColorBurn(base.b, blend.b),
+            1.0
+        );
     }
 
     void main() {
@@ -472,20 +494,30 @@ const gradientShader = compileShader(gl.FRAGMENT_SHADER, `
         vec2 ogUv = uv;
         uv -= 0.5;
         vec2 uv2 = uv;
-        uv *= rot(time * 0.005);
-        uv2 *= revRot(time * 0.025);
-        float d1 = distance(uv, point1) * 0.2;
-        vec4 topColor = mix(color6, color1, dss(point1, point2, uv));
-        float h = cnoise(topColor.xyz * sin(-time * 0.05) + uv2.x);
-        float d2 = distance(uv2, point2) * 0.9;
-        vec4 bottomColor = mix(color5, color2, dss(point3, point4, uv * h));
-        vec4 comboColor = mix(topColor, bottomColor, dss(point5, point6, uv2));
-        float d3 = distance(uv * uv2, point3);
-        vec4 middleColor = mix(color4, color3, dss(point1, point3, uv * h));
-        vec4 combo2 = mix(middleColor, comboColor, smoothstep(0.0, 1.0, distance(uv * -h * 2.5, point4)));
-        vec4 final = mix(comboColor, combo2, dss(point2, point4, uv2 * h));
-        gl_FragColor = mix(final, middleColor, dss(point2, point5, ogUv));
-        //gl_FragColor = topColor;
+        uv *= rot(time * 0.025);
+        uv2 *= revRot(time * 0.037);
+        vec4 black = vec4(0.1, 0.0, 0.1, 1.0);
+        vec4 red = mix(black, color6, dss(point1, point2, uv));
+        vec4 blue = mix(black, color5, dss(point1 + 0.5, point2 + 0.5, uv));
+        vec4 green = mix(black, color2, dss(point1 + 0.25, point2, uv));
+        vec4 red2 = mix(black, color6, dss(point4, point5, uv2));
+        vec4 blue2 = mix(black, color5, dss(point5 - 0.75, point6, uv2));
+        vec4 green2 = mix(black, color2, dss(point4 - 1.0, point5, uv2));
+        vec4 blend1 = screen(red, green);
+        vec4 blend2 = screen(green, blue);
+        vec4 blend3 = screen(red2, blue);
+        vec4 blend4 = screen(red2, green2);
+        vec4 blend5 = screen(blue2, green2);
+        vec4 blend6 = screen(blue2, red);
+        float n = cnoise(blend5.rgb);
+        vec4 mix1 = mix(blend1, blend2, blend1.r * n);
+        vec4 mix2 = mix(blend2, blend3, blend2.g);
+        vec4 mix3 = mix(blend3, blend4, n);
+        vec4 mix4 = mix(blend4, blend5, n);
+        vec4 mix5 = mix(blend5, blend6, n);
+        //gl_FragColor = clamp(screen(max(mix1, mix2), mix3), 0.0, 0.9);
+        vec4 color = screen(screen(screen(red, blue), green), vec4(0.4, 0.4, 0.4, 1.0));
+        gl_FragColor = screen(color, screen(screen(red2, blue2), green2));
     }
 `);
 
@@ -934,7 +966,7 @@ update();
 
 function interpolatePoints(dt, diff) {
     const d = Math.min(diff, 0.999)
-    const interpolationSpeed = dt * d * dt;
+    const interpolationSpeed = dt * d * 0.5;
     for (let i = 0; i < currentPoints.length; i++) {
         currentPoints[i].x += (targetPoints[i].x - currentPoints[i].x) * interpolationSpeed;
         currentPoints[i].y += (targetPoints[i].y - currentPoints[i].y) * interpolationSpeed;
@@ -943,8 +975,8 @@ function interpolatePoints(dt, diff) {
 
 
 function updateSingleTargetPoint() {
-    targetPoints[currentPointIndex].x = Math.random() * 2 - 1;
-    targetPoints[currentPointIndex].y = Math.random() * 2 - 1;
+    targetPoints[currentPointIndex].x = Math.random() - 0.5;
+    targetPoints[currentPointIndex].y = Math.random() - 0.5;
     currentPointIndex = (currentPointIndex + 1) % targetPoints.length;
 }
 
