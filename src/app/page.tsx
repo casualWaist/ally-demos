@@ -5,14 +5,14 @@ import {useRive} from "rive-react"
 import {useStateMachineInput} from "rive-react"
 
 export default function Home() {
-    const [riveLoaded, setRiveLoaded] = useState(false);
+    /*const [riveLoaded, setRiveLoaded] = useState(false);
     const video = useRef(null!)
 
     useEffect(() => {
         if (riveLoaded){
             video.current.play()
         }
-    }, [riveLoaded]);
+    }, [riveLoaded]);*/
 
   return <>
       <main className="absolute flex z-10 min-h-screen w-screen flex-col items-center p-24 pointer-events-none"
