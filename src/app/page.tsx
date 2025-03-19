@@ -5,6 +5,14 @@ import {useRive} from "rive-react"
 import {useStateMachineInput} from "rive-react"
 
 export default function Home() {
+    const [riveLoaded, setRiveLoaded] = useState(false);
+    const video = useRef(null!)
+
+    /*useEffect(() => {
+        if (riveLoaded){
+            video.current.play()
+        }
+    }, [riveLoaded]);*/
 
   return <>
       <main className="absolute flex z-10 min-h-screen w-screen flex-col items-center p-24 pointer-events-none"
@@ -12,7 +20,7 @@ export default function Home() {
                 console.log(event.pageX, event.pageY)
             }}>
           <div className="flex flex-row justify-between items-center pointer-events-none">
-              <BlueDragon width={700} height={700}/>
+              <DNDHero width={700} height={700}/>
           </div>
           {/*<div className="relative h-[500px] bg-green-400">
               <video src="CAHero.mp4" ref={video} muted className="pt-[109.5px] w-[500px]"/>
@@ -41,10 +49,22 @@ export default function Home() {
               <Diamond width={100} height={100}/>
           </div>*/}
       </main>
+      <div className="absolute top-full flex flex-row justify-between items-center bg-white w-full h-screen">
+          <AsaBasic width={700} height={700}/>
+      </div>
+      <div className="absolute top-[200%] flex flex-row justify-between items-center bg-white w-full h-screen">
+          <BlueDragon width={700} height={700}/>
+      </div>
+      <div className="absolute top-[300%] flex flex-row justify-center overflow-visible items-center bg-white w-full h-screen">
+          <BetaButton width={500} height={500}/>
+      </div>
+      <div className="absolute top-[400%] flex flex-row justify-center overflow-visible items-center bg-white w-full h-screen">
+          <AsaWizard width={700} height={700}/>
+      </div>
   </>;
 }
 
-function BlueDragon({width, height}: {width: number, height: number}) {
+function DNDHero({width, height}: {width: number, height: number}) {
     const {RiveComponent, rive} = useRive({
         src: "/dnd_hero.riv",
         stateMachines: "State Machine 1",
@@ -64,6 +84,64 @@ function BlueDragon({width, height}: {width: number, height: number}) {
     )
 
 }
+
+function BlueDragon({width, height}: {width: number, height: number}) {
+    const {RiveComponent, rive} = useRive({
+        src: "/blue_dragon.riv",
+        stateMachines: "State Machine 1",
+        autoplay: true,
+    });
+    return (
+        <div style={{width: width, height: height, overflow: 'visible', pointerEvents: 'none'}}>
+            <RiveComponent/>
+        </div>
+    )
+
+}
+
+function BetaButton({width, height}: {width: number, height: number}) {
+    const {RiveComponent, rive} = useRive({
+        src: "/beta_button.riv",
+        stateMachines: "State Machine 1",
+        autoplay: true,
+    });
+    return (
+        <div style={{width: width, height: height, overflow: 'visible'}}>
+            <RiveComponent style={{overflow: 'visible'}}/>
+        </div>
+    )
+
+}
+
+function AsaWizard({width, height}: {width: number, height: number}) {
+    const {RiveComponent, rive} = useRive({
+        src: "/asa_wizard.riv",
+        stateMachines: "State Machine 1",
+        autoplay: true,
+    });
+    return (
+        <div style={{width: width, height: height, overflow: 'visible'}}>
+            <RiveComponent style={{overflow: 'visible'}}/>
+        </div>
+    )
+
+}
+
+/*function VideoOverlay({onLoad, width, height}: {onLoad: ()=>void, width: number, height: number}) {
+    const {RiveComponent, rive} = useRive({
+        src: "/charge_anywhere_hero.riv",
+        stateMachines: "State Machine 1",
+        autoplay: true,
+        onLoad: () => onLoad(true)
+    });
+
+    return (
+        <div style={{position: "absolute", top:0, width: width, height: height, overflow: 'visible'}}>
+            <RiveComponent/>
+        </div>
+    )
+
+}*/
 
 function ShowMeState({width, height}: { width: number, height: number }) {
     const {rive, canvas, RiveComponent} = useRive({
@@ -184,30 +262,30 @@ function AsaBasic({width, height}: { width: number, height: number }) {
         }*/
     }, [rive]);
     return (
-        <main className="flex bg-[#ffe500] min-h-screen flex-col items-center justify-between p-24"
+        <div className="flex bg-[#ffe500] min-h-screen w-full flex-col items-center justify-between p-24"
               onPointerMove={(event) => {
-                  updateRive(event.pageX, event.pageY)
+                  updateRive(event.clientX, event.clientY)
               }}>
             <div className="flex flex-row justify-between items-center">
-        <div style={{width: width, height: height}}>
-            <RiveComponent onPointerEnter={(event) => {
-                if (!hovering?.value) {
-                    hovering!.value = true
-                    setTimeout(() => {
-                        hovering!.value = false
-                    }, 3900)
-                /*const canvas_stream = canvas!.captureStream(60); // fps
-                // Create media recorder from canvas stream
-                media_recorder.current = new MediaRecorder(canvas_stream, { mimeType: "video/webm; codecs=vp9" });
-                capture()
-                setTimeout(() => {
-                    media_recorder.current.stop()
-                }, 500)
-                rive?.play()*/
-            }}}/>
-        </div>
+                <div style={{width: width, height: height}}>
+                    <RiveComponent onPointerEnter={(event) => {
+                        if (!hovering?.value) {
+                            hovering!.value = true
+                            setTimeout(() => {
+                                hovering!.value = false
+                            }, 3900)
+                        /*const canvas_stream = canvas!.captureStream(60); // fps
+                        // Create media recorder from canvas stream
+                        media_recorder.current = new MediaRecorder(canvas_stream, { mimeType: "video/webm; codecs=vp9" });
+                        capture()
+                        setTimeout(() => {
+                            media_recorder.current.stop()
+                        }, 500)
+                        rive?.play()*/
+                    }}}/>
+                </div>
             </div>
-        </main>
+        </div>
     )
 
 }
