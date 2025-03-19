@@ -207,14 +207,14 @@ function AsaBasic({width, height}: { width: number, height: number }) {
         stateMachines: "State Machine 1",
         autoplay: true,
     });
-    const media_recorder = useRef<MediaRecorder>(null!)
+    /*const media_recorder = useRef<MediaRecorder>(null!)
     const a = useRef(document.createElement("a"))
     const url = useRef<string>('')
-    const chunks: Blob[] = []
+    const chunks: Blob[] = []*/
 
     const hovering = useStateMachineInput(rive, "State Machine 1", "Hovering", false);
 
-    const on_media_recorder_stop = useRef((chunks: Blob[]) => {
+    /*const on_media_recorder_stop = useRef((chunks: Blob[]) => {
         const blob = new Blob(chunks, { type: "video/webm" })
         url.current = URL.createObjectURL(blob)
         document.body.appendChild(a.current)
@@ -230,7 +230,7 @@ function AsaBasic({width, height}: { width: number, height: number }) {
         media_recorder.current.onstop = () => {on_media_recorder_stop.current(chunks)}
         // Start recording using a 1s timeslice [ie data is made available every 1s)
         media_recorder.current.start(1000)
-    }
+    }*/
     const xAxisLE = useStateMachineInput(rive, "State Machine 1", "xAxisLE", 0.5)
     const yAxisLE = useStateMachineInput(rive, "State Machine 1", "yAxisLE", 0.5)
     const xAxisRE = useStateMachineInput(rive, "State Machine 1", "xAxisRE", 0.5)
