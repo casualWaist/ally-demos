@@ -19,9 +19,9 @@ export default function Home() {
             onPointerMove={(event) => {
                 console.log(event.pageX, event.pageY)
             }}>
-          {/*<div className="flex flex-row justify-between items-center pointer-events-none">
+          <div className="flex flex-row justify-between items-center pointer-events-none">
               <DNDHero width={700} height={700}/>
-          </div>*/}
+          </div>
           {/*<div className="relative h-[500px] bg-green-400">
               <video src="CAHero.mp4" ref={video} muted className="pt-[109.5px] w-[500px]"/>
               <VideoOverlay onLoad={setRiveLoaded} width={500} height={500} />
