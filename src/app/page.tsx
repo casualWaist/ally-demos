@@ -19,9 +19,9 @@ export default function Home() {
             onPointerMove={(event) => {
                 console.log(event.pageX, event.pageY)
             }}>
-          <div className="flex flex-row justify-between items-center pointer-events-none">
+          {/*<div className="flex flex-row justify-between items-center pointer-events-none">
               <DNDHero width={700} height={700}/>
-          </div>
+          </div>*/}
           {/*<div className="relative h-[500px] bg-green-400">
               <video src="CAHero.mp4" ref={video} muted className="pt-[109.5px] w-[500px]"/>
               <VideoOverlay onLoad={setRiveLoaded} width={500} height={500} />
@@ -52,8 +52,8 @@ export default function Home() {
       <div className="absolute top-full flex flex-row justify-between items-center bg-white w-full h-screen">
           <AsaBasic width={700} height={700}/>
       </div>
-      <div className="absolute top-[200%] flex flex-row justify-between items-center bg-white w-full h-screen">
-          <BlueDragon width={700} height={700}/>
+      <div className="absolute top-[200%] flex flex-row justify-between items-center bg-black w-full h-screen">
+          <BlueDragon width={1400} height={1400}/>
       </div>
       <div className="absolute top-[300%] flex flex-row justify-center overflow-visible items-center bg-white w-full h-screen">
           <BetaButton width={500} height={500}/>
@@ -87,12 +87,12 @@ function DNDHero({width, height}: {width: number, height: number}) {
 
 function BlueDragon({width, height}: {width: number, height: number}) {
     const {RiveComponent, rive} = useRive({
-        src: "/blue_dragon.riv",
+        src: "/ally_dragons_one.riv",
         stateMachines: "State Machine 1",
         autoplay: true,
     });
     return (
-        <div style={{width: width, height: height, overflow: 'visible', pointerEvents: 'none'}}>
+        <div style={{width: width, height: height, overflow: 'visible'}}>
             <RiveComponent/>
         </div>
     )
@@ -101,7 +101,7 @@ function BlueDragon({width, height}: {width: number, height: number}) {
 
 function BetaButton({width, height}: {width: number, height: number}) {
     const {RiveComponent, rive} = useRive({
-        src: "/beta_button.riv",
+        src: "/beta_button_event.riv",
         stateMachines: "State Machine 1",
         autoplay: true,
     });
@@ -115,7 +115,7 @@ function BetaButton({width, height}: {width: number, height: number}) {
 
 function AsaWizard({width, height}: {width: number, height: number}) {
     const {RiveComponent, rive} = useRive({
-        src: "/asa_wizard.riv",
+        src: "/asa_wizard_webflow_pad_left.riv",
         stateMachines: "State Machine 1",
         autoplay: true,
     });
